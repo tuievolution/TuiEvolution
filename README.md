@@ -1,1 +1,2 @@
-hiii I am heree
+TuiEvolution
+Portfolio for projects two friends created together
