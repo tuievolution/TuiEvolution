@@ -1,19 +1,15 @@
-import { useState } from 'react'
-import './App.css'
-import { Route, Routes } from 'react-router-dom';
+import { Container } from '@mui/material';
+import AppRouter from './router';
 import NavBar from './components/NavBar';
-import { Main, Projects } from './pages';
-import { AboutUs } from './pages/AboutUs';
+import { navRoutes } from './router/routes';
 
 function App() {
   return (
-    <> {/* Fragment kullanıyoruz */}
-      <NavBar /> 
-      <Routes>
-        <Route path='/' element={<Main/>} />
-        <Route path='/AboutUs' element={<AboutUs/>} />
-        <Route path='/Projects' element={<Projects/>} />
-      </Routes>
+    <>
+      <NavBar routes={navRoutes} />
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <AppRouter />
+      </Container>
     </>
   );
 }

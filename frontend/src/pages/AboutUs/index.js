@@ -1,5 +1,3 @@
-import EvrimAluc from './EvrimAluc';
-import TuanaAkyildiz from './TuanaAkyildiz';
-import { AboutUs } from './AboutUs';
-
-export {EvrimAluc,TuanaAkyildiz,AboutUs};
+export { default as AboutUs } from './AboutUs';
+export { default as EvrimAluc } from './EvrimAluc';
+export { default as TuanaAkyildiz } from './TuanaAkyildiz';
