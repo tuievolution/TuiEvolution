@@ -1,93 +1,75 @@
-import { useState } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Box,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 
-const NavBar = ({ routes }) => {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+export const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ width: 250 }}>
-      <List>
-        {routes.map((route) => (
-          <ListItem
-            key={route.path}
-            component={RouterLink}
-            to={route.path}
-            sx={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            <ListItemText primary={route.name} />
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
+  const navLinks = [
+    { path: '/', label: 'Ana Sayfa' },
+    { path: '/projects', label: 'Projeler' },
+    { path: '/about-us', label: 'Hakkımızda' },
+    { path: '/profile', label: 'Profil' },
+  ];
 
   return (
-    <>
-      <AppBar position="static">
-        <Toolbar>
-          {isMobile && (
-            <IconButton
-              color="inherit"
-              edge="start"
-              onClick={handleDrawerToggle}
-              sx={{ mr: 2 }}
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled ? "glass-strong py-3 shadow-md" : "bg-[#BDF1F9] py-5"
+    }`}>
+      <nav className="container mx-auto px-6 flex justify-between items-center">
+        {/* Logo */}
+        <Link to="/" className="text-xl font-bold text-[#4F348D] tracking-tight">
+          TUI<span className="text-[#0D2D31]">EVOLUTION</span>
+        </Link>
+
+        {/* Masaüstü Navigasyon - Bu div linkleri yan yana dizer */}
+        <div className="hidden md:flex items-center gap-4">
+          <div className="glass-pill rounded-full px-3 py-1 flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`px-4 py-2 text-sm font-semibold rounded-full transition-all ${
+                  location.pathname === link.path 
+                  ? "bg-[#4F348D] text-white shadow-sm" 
+                  : "text-[#4F348D] hover:bg-white/40"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobil Buton */}
+        <button className="md:hidden text-[#4F348D]" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </nav>
+
+      {/* Mobil Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-[#BDF1F9] border-t border-[#4F348D]/10 p-6 flex flex-col gap-4 animate-fade-in">
+          {navLinks.map((link) => (
+            <Link 
+              key={link.path} 
+              to={link.path} 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-[#4F348D] font-semibold text-lg"
             >
-              <MenuIcon />
-            </IconButton>
-          )}
-          
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            TUIEVOLUTION
-          </Typography>
-
-          {!isMobile && (
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              {routes.map((route) => (
-                <Button
-                  key={route.path}
-                  color="inherit"
-                  component={RouterLink}
-                  to={route.path}
-                >
-                  {route.name}
-                </Button>
-              ))}
-            </Box>
-          )}
-        </Toolbar>
-      </AppBar>
-
-      <Drawer
-        variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{ keepMounted: true }}
-      >
-        {drawer}
-      </Drawer>
-    </>
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </header>
   );
 };
-
-export default NavBar;
