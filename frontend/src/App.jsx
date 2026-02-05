@@ -3,11 +3,11 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Navbar } from './components'; // components içindeki index.js'den gelir
 
-// Named exportları lazy ile yükleme yöntemi
-const Main = lazy(() => import('./pages/Home').then(module => ({ default: module.Main })));
-const Projects = lazy(() => import('./pages/Projects').then(module => ({ default: module.Projects })));
-const AboutUs = lazy(() => import('./pages/AboutUs').then(module => ({ default: module.AboutUs })));
-const Profile = lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
+// src/App.jsx
+const Main = lazy(() => import('./pages/Home').then(m => ({ default: m.Main })));
+const Projects = lazy(() => import('./pages/Projects').then(m => ({ default: m.Projects })));
+const AboutUs = lazy(() => import('./pages/AboutUs').then(m => ({ default: m.AboutUs })));
+const Profile = lazy(() => import('./pages/Profile').then(m => ({ default: m.Profile })));
 
 // Alt sayfalar için (Eğer index.js üzerinden gelmiyorsa direkt dosya yoluyla)
 const EvrimAluc = lazy(() => import('./pages/AboutUs/EvrimAluc').then(module => ({ default: module.EvrimAluc })));
