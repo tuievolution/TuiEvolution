@@ -1,57 +1,28 @@
-import { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
+import React, { Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { routes } from './routes';
-import PrivateRoute from './PrivateRoute';
 
-// Loading component'i
-const LoadingFallback = () => (
-  <Box 
-    display="flex" 
-    justifyContent="center" 
-    alignItems="center" 
-    minHeight="100vh"
-  >
-    <CircularProgress />
-  </Box>
+const Loader = () => (
+  <div className="flex justify-center items-center min-h-screen bg-[#FFDCF3]">
+    <div className="flex flex-col items-center gap-4">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#4F348D]"></div>
+      <p className="text-[#4F348D] font-medium">Yükleniyor...</p>
+    </div>
+  </div>
 );
 
-const AppRouter = () => {
+export const AppRouter = () => {
   return (
-    <BrowserRouter>
-      <Suspense fallback={<LoadingFallback />}>
-        <Routes>
-          {routes.map((route, index) => {
-            if (route.isPublic) {
-              return (
-                <Route
-                  key={index}
-                  path={route.path}
-                  element={route.element}
-                  exact={route.exact}
-                />
-              );
-            } else {
-              return (
-                <Route
-                  key={index}
-                  path={route.path}
-                  element={
-                    <PrivateRoute requiresAdmin={route.requiresAdmin}>
-                      {route.element}
-                    </PrivateRoute>
-                  }
-                />
-              );
-            }
-          })}
-          
-          {/* 404 sayfası için */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
+    <Suspense fallback={<Loader />}>
+      <Routes>
+        {routes.map((route) => (
+          <Route 
+            key={route.path} 
+            path={route.path} 
+            element={<route.element />} 
+          />
+        ))}
+      </Routes>
+    </Suspense>
   );
 };
-
-export default AppRouter;

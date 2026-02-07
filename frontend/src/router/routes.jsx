@@ -1,65 +1,14 @@
 import { lazy } from 'react';
 
-// Lazy loading ile component'leri yükleme
-const Main = lazy(() => import('../pages/Home/Main'));
-const Projects = lazy(() => import('../pages/Projects/Projects'));
-const AboutUs = lazy(() => import('../pages/AboutUs/AboutUs'));
-const EvrimAluc = lazy(() => import('../pages/AboutUs/EvrimAluc'));
-const TuanaAkyildiz = lazy(() => import('../pages/AboutUs/TuanaAkyildiz'));
-const Profile = lazy(() => import('../pages/Profile/Profile'));
-
-// Admin sayfaları (eğer varsa)
-// const AdminDashboard = lazy(() => import('../pages/Admin/Dashboard'));
+// Named exportları (const Main vb.) React.lazy'nin anlayacağı formatta yakalar
+const lazyNamed = (path, name) => 
+  lazy(() => import(`../pages/${path}`).then(m => ({ default: m[name] })));
 
 export const routes = [
-  {
-    path: '/',
-    element: <Main />,
-    name: 'Ana Sayfa',
-    exact: true,
-    isPublic: true,
-  },
-  {
-    path: '/projects',
-    element: <Projects />,
-    name: 'Projeler',
-    isPublic: true,
-  },
-  {
-    path: '/about-us',
-    element: <AboutUs />,
-    name: 'Hakkımızda',
-    isPublic: true,
-  },
-  {
-    path: '/about-us/evrim-aluc',
-    element: <EvrimAluc />,
-    name: 'Evrim Aluç',
-    isPublic: true,
-  },
-  {
-    path: '/about-us/tuana-akyildiz',
-    element: <TuanaAkyildiz />,
-    name: 'Tuana Akyıldız',
-    isPublic: true,
-  },
-  {
-    path: '/profile',
-    element: <Profile />,
-    name: 'Profil',
-    isPublic: false, // Giriş gerektirir
-  },
-  // Admin routes (örnek)
-  // {
-  //   path: '/admin',
-  //   element: <AdminDashboard />,
-  //   name: 'Admin',
-  //   isPublic: false,
-  //   requiresAdmin: true,
-  // },
+  { path: "/", name: "Ana Sayfa", element: lazyNamed('Home/Main', 'Main') },
+  { path: "/projects", name: "Projeler", element: lazyNamed('Projects/Projects', 'Projects') },
+  { path: "/about-us", name: "Hakkımızda", element: lazyNamed('AboutUs/AboutUs', 'AboutUs') },
+  { path: "/about-us/evrim-aluc", name: "Evrim Aluç", element: lazyNamed('AboutUs/EvrimAluc', 'EvrimAluc') },
+  { path: "/about-us/tuana-akyildiz", name: "Tuana Akyıldız", element: lazyNamed('AboutUs/TuanaAkyildiz', 'TuanaAkyildiz') },
+  { path: "/profile", name: "Profil", element: lazyNamed('Profile/Profile', 'Profile') }
 ];
-
-// Navigasyon için kullanılacak route'lar (NavBar'da gösterilecekler)
-export const navRoutes = routes.filter(route => 
-  route.name && route.isPublic && !route.path.includes('/about-us/')
-);

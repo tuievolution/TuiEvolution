@@ -10,8 +10,8 @@ const navLinks = [
 ];
 
 export const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -25,13 +25,12 @@ export const Navbar = () => {
         isScrolled ? "glass-strong py-3 shadow-lg" : "bg-transparent py-5"
       }`}>
       <nav className="container mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="text-xl font-bold text-[#4F348D]">
           TUI<span className="text-[#0D2D31]">EVOLUTION</span>
         </Link>
 
-        {/* Ortadaki Cam Efektli Kapsül */}
-        <div className="hidden md:flex items-center">
+        {/* Masaüstü Ortalanmış Kapsül */}
+        <div className="hidden md:flex items-center gap-1">
           <div className="glass rounded-full px-2 py-1 flex items-center gap-1">
             {navLinks.map((link) => (
               <Link 
@@ -49,15 +48,13 @@ export const Navbar = () => {
           </div>
         </div>
 
-        {/* Giriş Butonu */}
         <div className="hidden md:block">
           <Link to="/profile" className="bg-[#4F348D] text-white px-6 py-2 rounded-full text-sm font-bold shadow-md hover:bg-[#0D2D31] transition-all">
             Giriş Yap
           </Link>
         </div>
 
-        {/* Mobil Buton */}
-        <button className="md:hidden p-2 text-[#4F348D]" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        <button className="md:hidden text-[#4F348D]" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           {isMobileMenuOpen ? <X size={28}/> : <Menu size={28}/>}
         </button>
       </nav>
