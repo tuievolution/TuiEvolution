@@ -1,19 +1,26 @@
+import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { Navbar } from './components/Navbar';
-import { AppRouter } from './router';
+import Navbar from './components/Navbar';
+import AppRouter from './router/AppRouter';
+import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <BrowserRouter>
-      {/* Sayfa arka planı pembe ve metin petrol yeşili */}
-      <div className="min-h-screen bg-[#FFDCF3] text-[#0D2D31]">
-        <Navbar />
-        {/* pt-24 navbar'ın yüksekliğine göre içerik alanı */}
-        <main className="container mx-auto px-6 pt-24 pb-12">
-          <AppRouter />
-        </main>
-      </div>
-    </BrowserRouter>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          {/* Ana Kapsayıcı */}
+          <div className="min-h-screen relative overflow-hidden">
+            {/* Arka Plan Dekorasyonu (Opsiyonel) */}
+            <div className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-accent/20 rounded-full blur-[100px] -z-10"></div>
+            
+            <Navbar />
+            <AppRouter />
+          </div>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

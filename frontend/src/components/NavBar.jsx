@@ -1,74 +1,84 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Moon, Sun, User, LogIn, ChevronDown } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
-const navLinks = [
-  { path: '/', label: "Ana Sayfa" },
-  { path: "/projects", label: "Projeler" },
-  { path: "/about-us", label: "Hakkımızda" },
-  { path: "/profile", label: "Profil" },
-];
-
-export const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+const Navbar = () => {
+  const { isDarkMode, toggleTheme } = useTheme();
+  const { user, login, logout } = useAuth();
+  const [isAboutHovered, setIsAboutHovered] = useState(false);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 transition-all duration-500 z-50 ${
-        isScrolled ? "glass-strong py-3 shadow-lg" : "bg-transparent py-5"
-      }`}>
-      <nav className="container mx-auto px-6 flex items-center justify-between">
-        <Link to="/" className="text-xl font-bold text-[#4F348D]">
-          TUI<span className="text-[#0D2D31]">EVOLUTION</span>
+    <nav className="fixed top-0 left-0 right-0 z-50 glass px-6 py-4 transition-all duration-300">
+      <div className="container mx-auto flex justify-between items-center">
+        
+        {/* LOGO */}
+        <Link to="/" className="text-2xl font-bold text-accent tracking-tighter">
+          TUI<span className="text-textPrimary">EVOLUTION</span>
         </Link>
 
-        {/* Masaüstü Ortalanmış Kapsül */}
-        <div className="hidden md:flex items-center gap-1">
-          <div className="glass rounded-full px-2 py-1 flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link 
-                to={link.path} 
-                key={link.path} 
-                className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
-                  location.pathname === link.path 
-                  ? "bg-[#4F348D] text-white shadow-md" 
-                  : "text-[#4F348D] hover:bg-white/40"
-                }`}
-              > 
-                {link.label} 
-              </Link>
-            ))}
+        {/* ORTA MENÜ (Ana Navigasyon) */}
+        <div className="hidden md:flex items-center gap-8 bg-white/10 px-6 py-2 rounded-full backdrop-blur-sm border border-white/20">
+          <Link to="/" className="hover:text-accent font-medium transition-colors">Home</Link>
+          <Link to="/projects" className="hover:text-accent font-medium transition-colors">Projects</Link>
+          
+          {/* HOVER MENÜ (Hakkımızda) */}
+          <div 
+            className="relative h-full flex items-center cursor-pointer"
+            onMouseEnter={() => setIsAboutHovered(true)}
+            onMouseLeave={() => setIsAboutHovered(false)}
+          >
+            <span className="hover:text-accent font-medium flex items-center gap-1 transition-colors">
+              About Us <ChevronDown size={16}/>
+            </span>
+            
+            {/* Açılır Menü */}
+            {isAboutHovered && (
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-48 bg-bgSecondary rounded-xl shadow-xl overflow-hidden animate-fade-in flex flex-col border border-white/20">
+                {/* Üçgen Ok */}
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-bgSecondary rotate-45 border-l border-t border-white/20"></div>
+                
+                <Link to="/about" className="relative z-10 px-4 py-3 hover:bg-accent hover:text-white text-sm transition-colors text-center">
+                  Genel Bakış
+                </Link>
+                <div className="h-[1px] bg-accent/20 mx-2"></div>
+                <div className="flex justify-between">
+                   <span className="px-4 py-3 text-xs opacity-70 w-full text-center">Evrim & Tuana</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="hidden md:block">
-          <Link to="/profile" className="bg-[#4F348D] text-white px-6 py-2 rounded-full text-sm font-bold shadow-md hover:bg-[#0D2D31] transition-all">
-            Giriş Yap
-          </Link>
+        {/* SAĞ TARAF (Profil & Tema) */}
+        <div className="flex items-center gap-4">
+          <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-bgSecondary/50 text-accent transition-colors">
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+
+          {user ? (
+            <div className="flex items-center gap-3 bg-bgSecondary/30 px-3 py-1 rounded-full border border-accent/20">
+              <Link to="/profile" className="flex items-center gap-2 font-medium text-sm">
+                <User size={18} className="text-accent" />
+                <span className="hidden sm:inline">{user.name}</span>
+              </Link>
+              <div className="w-[1px] h-4 bg-accent/30"></div>
+              <button onClick={logout} className="text-xs text-red-500 hover:font-bold">Sign Out</button>
+            </div>
+          ) : (
+            <button 
+              onClick={login} 
+              className="flex items-center gap-2 bg-accent text-white px-5 py-2 rounded-full text-sm font-bold hover:opacity-90 transition-all shadow-md hover:shadow-lg"
+            >
+              <LogIn size={16} /> Sign In
+            </button>
+          )}
         </div>
 
-        <button className="md:hidden text-[#4F348D]" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X size={28}/> : <Menu size={28}/>}
-        </button>
-      </nav>
-
-      {/* Mobil Menü */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden glass-strong animate-fade-in p-6 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <Link key={link.path} to={link.path} onClick={() => setIsMobileMenuOpen(false)} className="text-[#4F348D] font-semibold text-lg">
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      )}
-    </header>
+      </div>
+    </nav>
   );
 };
+
+export default Navbar;

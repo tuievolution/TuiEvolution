@@ -1,34 +1,38 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --color-page-bg: #FFDCF3;
-  --color-nav-bg: #BDF1F9;
-  --color-primary: #4F348D;
-  --color-dark: #0D2D31;
+@layer base {
+  :root {
+    /* LIGHT MODE (Senin Renklerin) */
+    --bg-primary: #FFDCF3;     /* Ana Arka Plan: Pembe */
+    --bg-secondary: #FFB2F5;   /* Kartlar/Navbar: Koyu Pembe */
+    --text-primary: #0D2D31;   /* Yazı: Petrol Yeşili */
+    --accent: #4F348D;         /* Vurgu/Logo: Mor */
+  }
+
+  .dark {
+    /* DARK MODE (Uyumlu Koyu Tema) */
+    --bg-primary: #1F122B;     /* Koyu Mor */
+    --bg-secondary: #3E2C4F;   /* Kartlar */
+    --text-primary: #FFE6F7;   /* Yazı: Açık Pembe */
+    --accent: #FFB2F5;         /* Vurgu: Parlak Pembe */
+  }
+
+  body {
+    @apply bg-bgPrimary text-textPrimary transition-colors duration-300 font-sans m-0;
+  }
 }
 
 @layer components {
-  /* Açık mavi yarı şeffaf cam efekti */
+  /* Cam Efekti */
   .glass {
-    background-color: rgba(189, 241, 249, 0.4);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    @apply bg-opacity-30 backdrop-blur-md border border-white/20 shadow-lg;
+    background-color: rgba(255, 255, 255, 0.2);
   }
-
-  /* Daha opak cam efekti */
-  .glass-strong {
-    background-color: rgba(189, 241, 249, 0.9);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(79, 52, 141, 0.1);
-  }
-}
-
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  
+  .dark .glass {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.05);
   }
 }
