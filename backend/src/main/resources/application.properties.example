@@ -1,6 +1,11 @@
-# application.properties.example
-server.port=8080
-spring.datasource.url=jdbc:h2:mem:tuidb
-spring.datasource.username=Sizin_Kullanici_Adiniz
-spring.datasource.password=Sizin_Sifreniz
-# Gerçek şifrelerinizi bu dosyaya yazmayın!
+# PostgreSQL Bağlantı Ayarları
+spring.datasource.url=jdbc:postgresql://localhost:5432/tuievolution_db
+spring.datasource.username=postgres
+spring.datasource.password=KURULUMDA_YAZDIGIN_SIFRE
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# Hibernate Ayarları
+# 'update' ayarı sayesinde Java modellerindeki değişiklikler otomatik SQL tablosuna yansır.
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
