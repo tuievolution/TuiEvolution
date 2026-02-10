@@ -21,13 +21,13 @@ export default {
         darkAccent: '#D6BCFA',       // Dark mode'da parlayan mor
       },
       animation: {
-        marquee: 'marquee 25s linear infinite',
+        marquee: 'marquee 30s linear infinite',
         'fade-in': 'fadeIn 0.3s ease-in-out',
       },
       keyframes: {
         marquee: {
           '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(calc(-50% - 1rem))' },
         },
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(10px)' },
