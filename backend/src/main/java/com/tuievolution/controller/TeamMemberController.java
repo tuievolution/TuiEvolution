@@ -7,7 +7,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "tuievolutionportfolio-mfd3iwib4-tuievolutions-projects.vercel.app") // Buraya Vercel linkinizi yazın
 @RestController
-@RequestMapping("/api/projects")
+@RequestMapping("/api/team")
 public class TeamMemberController {
 
     private final TeamMemberRepository teamMemberRepository;
