@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Optional;
 
-@CrossOrigin(origins = "https://tuievolution.vercel.app", allowCredentials = "true") // Buraya Vercel linkinizi yazın
+@CrossOrigin(origins = "https://tuievolution.vercel.app", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/users")
 public class AuthController {

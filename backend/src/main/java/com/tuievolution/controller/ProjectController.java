@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/projects") // Projeler burada kalmaya devam edecek
+@RequestMapping("/api/projects") 
 @CrossOrigin(origins = "https://tuievolution.vercel.app", allowCredentials = "true")
 public class ProjectController {
 

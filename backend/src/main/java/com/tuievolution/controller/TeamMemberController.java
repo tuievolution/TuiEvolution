@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/team") // BURAYI DEĞİŞTİRDİK: "/api/projects" çakışıyordu
+@RequestMapping("/api/team")
 @CrossOrigin(origins = "https://tuievolution.vercel.app", allowCredentials = "true") // Ek güvenlik için
 public class TeamMemberController {
 
