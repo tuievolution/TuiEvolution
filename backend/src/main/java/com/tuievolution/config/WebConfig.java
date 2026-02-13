@@ -8,13 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // Tüm API yolları için izin ver
-                .allowedOrigins(
-                    "https://tuievolution.vercel.app", 
-                    "https://tuievolution-51ep22o8i-tuievolutions-projects.vercel.app"
-                ) // Vercel'deki tüm linklerinize izin veriyoruz
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*") // "*" yerine "allowedOriginPatterns" kullanın
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(true); // Bu true olduğu için üstteki pattern gereklidir
     }
 }

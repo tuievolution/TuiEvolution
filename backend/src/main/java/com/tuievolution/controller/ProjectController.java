@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects") // Projeler burada kalmaya devam edecek
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://tuievolution.vercel.app", allowCredentials = "true")
 public class ProjectController {
 
     @Autowired

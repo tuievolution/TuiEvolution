@@ -7,7 +7,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/team") // BURAYI DEĞİŞTİRDİK: "/api/projects" çakışıyordu
-@CrossOrigin(origins = "*") // Ek güvenlik için
+@CrossOrigin(origins = "https://tuievolution.vercel.app", allowCredentials = "true") // Ek güvenlik için
 public class TeamMemberController {
 
     private final TeamMemberRepository teamMemberRepository;
