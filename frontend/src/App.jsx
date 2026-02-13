@@ -13,7 +13,6 @@ function App() {
         <BrowserRouter>
           {/* Ana Kapsayıcı */}
           <div className="min-h-screen relative overflow-hidden">
-            {/* Arka Plan Dekorasyonu (Opsiyonel) */}
             <div className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-accent/20 rounded-full blur-[100px] -z-10"></div>
             
             <Navbar />

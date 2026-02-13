@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "https://tuievolution-frontend.vercel.app") // Buraya Vercel linkinizi yazın
+@CrossOrigin(origins = "tuievolutionportfolio-mfd3iwib4-tuievolutions-projects.vercel.app") // Buraya Vercel linkinizi yazın
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
