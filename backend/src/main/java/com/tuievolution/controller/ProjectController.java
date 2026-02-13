@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "https://tuievolution-backend.onrender.com") // Buraya Vercel linkinizi yazın
 @RestController
-@RequestMapping("/api/projects")
+@RequestMapping("/api/projects") // Projeler burada kalmaya devam edecek
+@CrossOrigin(origins = "*")
 public class ProjectController {
 
     @Autowired
