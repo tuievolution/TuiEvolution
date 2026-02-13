@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "https://tuievolution-backend.onrender.com") // Buraya Vercel linkinizi yazın
 @RestController
-@RequestMapping("/api/projects")
+@RequestMapping("/api/users")
 public class AuthController {
 
     @Autowired
