@@ -1,14 +1,16 @@
-// GEREKLİ İMPORT: useState ve useContext'i React'ten çekiyoruz
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
-// Context'i oluşturuyoruz
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // useState artık tanımlı olduğu için hata vermeyecek
   const [user, setUser] = useState(() => {
-    // Sayfa yüklendiğinde localStorage'dan kullanıcıyı kontrol et
-    const savedUser = localStorage.getItem('user');
+    // Hem Local hem Session storage kontrol edilir
+    const localUser = localStorage.getItem('user');
+    const sessionUser = sessionStorage.getItem('user');
+    
+    // Eğer Remember Me yapıldıysa local'den, yoksa session'dan gelir
+    const savedUser = localUser || sessionUser;
+
     try {
       return savedUser ? JSON.parse(savedUser) : null;
     } catch (e) {
@@ -16,14 +18,22 @@ export const AuthProvider = ({ children }) => {
     }
   });
 
-  const login = (userData) => {
+  // Login fonksiyonu artık "rememberMe" parametresi alıyor
+  const login = (userData, rememberMe) => {
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    if (rememberMe) {
+      // 30 Günlük Hatırlama (LocalStorage kalıcıdır, manuel silinmedikçe kalır)
+      localStorage.setItem('user', JSON.stringify(userData));
+    } else {
+      // Sadece tarayıcı açıkken hatırla
+      sessionStorage.setItem('user', JSON.stringify(userData));
+    }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
   };
 
   return (
@@ -33,11 +43,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom Hook: Diğer dosyalarda kolayca kullanmak için
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);

@@ -1,60 +1,147 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUpRight, Github, ArrowUp } from 'lucide-react';
 import ProjectMarquee from '../components/ProjectMarquee';
 
 export const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const location = useLocation();
+  const [highlightedSlug, setHighlightedSlug] = useState(null);
+
+  // Helper: Başlığı ID formatına çevirir
+  const getProjectSlug = (title) => title ? title.trim().replace(/\s+/g, '_') : '';
 
   useEffect(() => {
     fetch('http://localhost:8080/api/projects')
       .then(res => res.json())
-      .then(data => setProjects(data));
+      .then(data => setProjects(data))
+      .catch(err => console.error("Projeler yüklenemedi:", err));
       
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Hash Link Yönlendirmesi
   useEffect(() => {
     if (location.hash) {
-      const id = location.hash.replace('#', '');
-      const element = document.getElementById(id);
+      const slug = location.hash.replace('#', '');
+      setHighlightedSlug(slug);
+      
+      const element = document.getElementById(slug);
       if (element) {
-        setTimeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 500);
       }
     }
   }, [location, projects]);
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-20 transition-colors duration-500" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      
       <ProjectMarquee />
-      <div className="container mx-auto px-6 py-16">
-        <h1 className="text-4xl font-bold text-center mb-16">Our Project Catalog</h1>
-        <div className="grid gap-16">
-          {projects.map(project => (
-            <div key={project.id} id={`project-${project.id}`}  className="glass p-8 rounded-[2rem] flex flex-col md:flex-row gap-8">
-              <div className="w-full md:w-1/2 h-64 bg-accent/10 rounded-2xl overflow-hidden">
-                <img src={project.imageUrl} className="w-full h-full object-cover" alt={project.title} />
-              </div>
-              <div className="w-full md:w-1/2 flex flex-col justify-center">
-                <h2 className="text-3xl font-bold text-accent mb-4">{project.title}</h2>
-                <p className="text-lg opacity-80 mb-6">{project.description}</p>
-                <div className="flex gap-4">
-                  <span className="px-4 py-2 bg-accent text-white rounded-full text-sm">{project.stack}</span>
+
+      <div className="container mx-auto px-6 py-16 relative z-10">
+        
+        <div className="text-center mx-auto max-w-3xl mb-16">
+          <span className="text-sm font-bold tracking-wider uppercase opacity-70" style={{ color: 'var(--accent)' }}>
+            Öne Çıkan Çalışmalar
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6" style={{ color: 'var(--text-primary)' }}>
+            Etki Yaratan <span className="italic font-normal" style={{ color: 'var(--accent)' }}>Projeler</span>
+          </h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-12">
+          {projects.map((project) => {
+            const projectSlug = getProjectSlug(project.title);
+            const isHighlighted = projectSlug === highlightedSlug;
+
+            return (
+              <div 
+                key={project.id}
+                id={projectSlug}
+                // GÜNCELLEME: 'glow-card-base' her zaman var, 'active' highlighted ise var.
+                // Hover efekti CSS'teki :hover ile otomatik çalışacak.
+                className={`group md:row-span-1 shadow-lg transition-all duration-500 rounded-2xl glow-card-base relative
+                  ${isHighlighted ? 'active scale-[1.02]' : 'hover:scale-[1.02]'}`}
+                style={{ 
+                   // Arka plan rengini CSS (glow-content-wrapper) halledecek
+                   backgroundColor: 'transparent'
+                }}
+              >
+                {/* İçerik Wrapper: Işığın üstünde duracak ve arkaplan rengini verecek */}
+                <div className="glow-content-wrapper h-full flex flex-col">
+                    
+                    {/* Resim Alanı */}
+                    <div className="relative overflow-hidden aspect-video rounded-t-xl">
+                      <img
+                        src={project.imageUrl || "https://via.placeholder.com/600x400"}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60" />
+                      
+                      <div className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        {project.projectLink && (
+                          <a href={project.projectLink} target="_blank" rel="noreferrer" className="p-3 rounded-full bg-white text-black hover:scale-110 transition-transform shadow-lg">
+                            <ArrowUpRight className="w-6 h-6"/>
+                          </a>
+                        )}
+                        {project.githubLink && (
+                          <a href={project.githubLink} target="_blank" rel="noreferrer" className="p-3 rounded-full bg-black text-white hover:scale-110 transition-transform shadow-lg">
+                            <Github className="w-6 h-6"/>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* İçerik Alanı */}
+                    <div className="p-6 space-y-4 flex-1">
+                      <div className="flex items-start justify-between">
+                        <h3 className="text-2xl font-bold transition-colors" style={{ color: 'var(--text-primary)' }}>
+                          {project.title}
+                        </h3>
+                        <ArrowUpRight 
+                          className="w-6 h-6 transition-all group-hover:translate-x-1 group-hover:-translate-y-1"
+                          style={{ color: 'var(--accent)' }}
+                        />
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {project.stack ? project.stack.split(',').map((tech, i) => (
+                          <span
+                            key={i}
+                            className="px-4 py-1.5 rounded-full text-xs font-bold border transition-all duration-300 hover:brightness-110"
+                            style={{ 
+                              backgroundColor: 'var(--bg-primary)', 
+                              color: 'var(--text-primary)',
+                              borderColor: 'rgba(255,255,255,0.2)'
+                            }}
+                          > 
+                            {tech.trim()} 
+                          </span>
+                        )) : (
+                          <span className="text-xs opacity-50">Teknoloji bilgisi yok</span>
+                        )}
+                      </div>
+                    </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
       </div>
 
       {showScrollTop && (
         <button 
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-10 left-20 p-4 bg-accent text-white rounded-full shadow-2xl hover:scale-110 transition-all z-50"
+          className="fixed bottom-24 right-7 p-3 rounded-full shadow-2xl hover:scale-110 transition-all z-40 text-white"
+          style={{ backgroundColor: 'var(--accent)' }}
         >
           <ArrowUp size={24} />
         </button>

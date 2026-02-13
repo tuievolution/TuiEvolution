@@ -9,7 +9,7 @@ const AuraTech = () => {
   const [projects, setProjects] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   
-  // Başlangıç mesajını sabit bir değişken olarak tanımlıyoruz
+  // Başlangıç mesajı
   const initialMessages = [
     { 
       id: 1, 
@@ -28,6 +28,10 @@ const AuraTech = () => {
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
+  // Helper: Başlığı URL uyumlu slug'a çevirir (Projects.jsx ile aynı mantık)
+  // Örnek: "TuiEvolution AI" -> "TuiEvolution_AI"
+  const getProjectSlug = (title) => title ? title.trim().replace(/\s+/g, '_') : '';
+
   // 1. Veritabanından Projeleri Çekme
   useEffect(() => {
     axios.get('http://localhost:8080/api/projects')
@@ -41,10 +45,8 @@ const AuraTech = () => {
   }, [messages, isOpen]);
 
   // SIFIRLAMA VE KAPATMA FONKSİYONU
-  // Hem kapat tuşuna basınca hem de sayfa yönlendirmesinde çalışır
   const closeAndReset = () => {
     setIsOpen(false);
-    // Kapanma animasyonu bitince (300ms sonra) mesajları sıfırla
     setTimeout(() => {
       setMessages(initialMessages);
     }, 300);
@@ -92,11 +94,11 @@ const AuraTech = () => {
           break;
 
         case 'navigate_about':
-          handleNavigation('/about'); // Yönlendir ve Sıfırla
+          handleNavigation('/about');
           return;
 
         case 'navigate_contact':
-          handleNavigation('/contact'); // Yönlendir ve Sıfırla
+          handleNavigation('/contact');
           return;
         
         case 'menu':
@@ -106,21 +108,26 @@ const AuraTech = () => {
         
         case 'end_chat':
           botResponse.text = "Peki, iyi günler dilerim! 👋 Sohbeti kapatıyorum.";
-          setTimeout(() => closeAndReset(), 1500); // 1.5 saniye sonra kapat
+          setTimeout(() => closeAndReset(), 1500);
           break;
 
         default:
           if (option.value.startsWith('project_detail_')) {
             const project = option.projectData;
             botResponse.text = `${project.title}: ${project.description || "Bu proje modern teknolojilerle geliştirildi."} \n\nBu projeye gitmek ister misiniz?`;
+            
+            // GÜNCELLEME: Proje ID'si yerine Slug ID kullanmak için veriyi saklıyoruz
             botResponse.options = [
-              { label: "Projeye Git", value: `go_project_${project.id}` },
+              { label: "Projeye Git", value: `go_project`, projectData: project },
               { label: "Diğer Projeler", value: "projects" }
             ];
           } 
-          else if (option.value.startsWith('go_project_')) {
-            const projectId = option.value.split('_')[2];
-            handleNavigation(`/projects#project-${projectId}`); // Yönlendir ve Sıfırla
+          // GÜNCELLEME: Projeye Git butonu tıklandığında doğru Slug ile yönlendirme
+          else if (option.value === 'go_project') {
+            const project = option.projectData; // Proje verisini al
+            const slug = getProjectSlug(project.title); // Slug oluştur (Örn: TuiEvolution_AI)
+            
+            handleNavigation(`/projects#${slug}`); // Yönlendir ve Sıfırla
             return;
           }
       }
@@ -131,7 +138,6 @@ const AuraTech = () => {
   };
 
   return (
-    // KONUM GÜNCELLEMESİ: left-6 yerine right-6 yapıldı
     <div className="fixed bottom-6 right-6 z-[9999] font-sans flex flex-col items-end">
       
       <AnimatePresence>
@@ -143,8 +149,6 @@ const AuraTech = () => {
             className="mb-4 w-[350px] h-[500px] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-white/20 backdrop-blur-md"
             style={{ backgroundColor: 'var(--bg-secondary)' }}
           >
-            {/* HEADER GÜNCELLEMESİ: Dark Mode kontrastı için text rengi ayarlandı */}
-            {/* light modda text-white, dark modda text-[#1A0B2E] (koyu mor) */}
             <div 
               className="p-4 flex justify-between items-center border-b border-white/10 text-white dark:text-[#1A0B2E]" 
               style={{ backgroundColor: 'var(--accent)' }}
@@ -160,18 +164,15 @@ const AuraTech = () => {
               </div>
               
               <div className="flex gap-2">
-                {/* Manuel Sıfırlama Butonu */}
                 <button onClick={() => setMessages(initialMessages)} title="Sohbeti Sıfırla" className="hover:opacity-70 transition-opacity">
                     <RefreshCw size={18} />
                 </button>
-                {/* Kapatma Butonu (Sıfırlayarak kapatır) */}
                 <button onClick={closeAndReset} title="Kapat" className="hover:opacity-70 transition-opacity">
                   <X size={20} />
                 </button>
               </div>
             </div>
 
-            {/* Mesaj Alanı */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
@@ -186,7 +187,6 @@ const AuraTech = () => {
                     {msg.text}
                   </div>
                   
-                  {/* SEÇENEKLER GÜNCELLEMESİ: flex-col ile alt alta alındı */}
                   {msg.sender === 'bot' && msg.options && (
                     <div className="flex flex-col gap-2 mt-2 w-full max-w-[85%]">
                       {msg.options.map((opt, idx) => (
@@ -226,7 +226,6 @@ const AuraTech = () => {
         )}
       </AnimatePresence>
 
-      {/* Açma Butonu */}
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}

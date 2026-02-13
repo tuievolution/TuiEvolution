@@ -20,31 +20,35 @@ export const ProjectMarquee = () => {
 
   if (loading || projects.length === 0) return null;
 
-  // Boşluğu engellemek için projeleri çoğaltıyoruz
+  // Sonsuz döngü için veriyi çoğalt
   const displayProjects = [...projects, ...projects, ...projects, ...projects];
+
+  // Helper: Başlıktaki boşlukları _ yapar
+  const getProjectSlug = (title) => title.trim().replace(/\s+/g, '_');
 
   return (
     <div className="w-full overflow-hidden py-10 bg-accent/5 dark:bg-white/5 mt-10 relative">
-      {/* Kayan Kapsayıcı: 'animate-marquee' sınıfını kullanıyoruz */}
       <div className="flex w-max gap-8 animate-marquee whitespace-nowrap hover:[animation-play-state:paused]">
         {displayProjects.map((project, index) => (
           <Link 
             key={`${project.id}-${index}`} 
-            to={`/projects#project-${project.id}`}
-            className="w-72 h-48 glass card flex flex-col items-center justify-between overflow-hidden group border border-transparent hover:border-accent relative rounded-2xl p-6 transition-all duration-300 flex-shrink-0"
+            // ID yerine Title Slug kullanıyoruz (Örn: #TuiEvolution_AI)
+            to={`/projects#${getProjectSlug(project.title)}`}
+            className="w-72 h-48 glass card flex flex-col items-center justify-center overflow-hidden group border border-transparent hover:border-accent relative rounded-2xl p-0 transition-all duration-300 flex-shrink-0"
           >
+             {/* Arka Plan Görseli */}
              <div 
-                className="absolute inset-0 bg-cover bg-center opacity-20 group-hover:opacity-40 transition-opacity" 
-                style={{ backgroundImage: `url(${project.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image'})` }}
-             ></div>
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" 
+                style={{ backgroundImage: `url(${project.imageUrl || 'https://via.placeholder.com/300x200'})` }}
+             >
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors"></div>
+             </div>
              
-             <div className="relative z-10 flex flex-col items-center justify-center h-full text-center">
-                <h3 className="text-xl font-bold text-accent mb-2 drop-shadow-md">
+             {/* Sadece Başlık */}
+             <div className="relative z-10 text-center px-4">
+                <h3 className="text-xl font-bold text-white drop-shadow-md tracking-wider">
                   {project.title}
                 </h3>
-                <span className="text-xs font-semibold uppercase tracking-wider bg-white/80 dark:bg-black/50 px-3 py-1 rounded-full text-textPrimary">
-                  {project.stack}
-                </span>
              </div>
           </Link>
         ))}

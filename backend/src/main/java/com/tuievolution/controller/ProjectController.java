@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Burası bir REST API'dir. JSON döner.
-@RequestMapping("/api/projects") // Bu adresten ulaşılır.
-@CrossOrigin(origins = "http://localhost:3000") // DİKKAT: React'in çalıştığı porta izin veriyoruz. Yoksa CORS hatası alırsın.
+@CrossOrigin(origins = "https://tuievolution-frontend.vercel.app") // Buraya Vercel linkinizi yazın
+@RestController
+@RequestMapping("/api/projects")
 public class ProjectController {
 
     @Autowired

@@ -5,9 +5,9 @@ import com.tuievolution.repository.TeamMemberRepository;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+@CrossOrigin(origins = "https://tuievolution-frontend.vercel.app") // Buraya Vercel linkinizi yazın
 @RestController
-@RequestMapping("/api/team")
-@CrossOrigin(origins = "http://localhost:3000") // Frontend portuna izin ver
+@RequestMapping("/api/projects")
 public class TeamMemberController {
 
     private final TeamMemberRepository teamMemberRepository;

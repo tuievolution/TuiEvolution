@@ -1,109 +1,117 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 
-export const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+const Login = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [rememberMe, setRememberMe] = useState(false); // Remember Me State
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleAuth = async (e) => {
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const response = await fetch(`http://localhost:8080${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        login(data, rememberMe); // rememberMe true ise localStorage'a kaydeder
-        navigate('/');
-      } else {
-        setError(data.message || 'Authentication failed');
+      // Backend'e istek
+      const response = await axios.post("http://localhost:8080/api/users/login", formData);
+      
+      if (response.data) {
+        // Context'e rememberMe bilgisini de gönderiyoruz
+        login(response.data, rememberMe);
+        navigate("/profile");
       }
     } catch (err) {
-      setError('Sunucu bağlantı hatası. Backend açık mı?');
+      // Kayıtlı değilse veya şifre yanlışsa buraya düşer
+      setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin veya kayıt olun.");
+    }
+  };
+
+  const handleForgotPassword = () => {
+    // Backend SMTP servisi hazır olmadığı için şimdilik alert
+    const email = formData.email;
+    if(email) {
+        alert(`${email} adresine şifre sıfırlama bağlantısı gönderildi! (Simülasyon)`);
+    } else {
+        alert("Lütfen önce email alanını doldurunuz.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-bg-primary">
-      <div className="w-full max-w-md glass p-10 rounded-[2.5rem] shadow-2xl">
-        <h2 className="text-3xl font-black text-accent mb-2 text-center">
-          {isLogin ? 'Welcome Back' : 'Create Account'}
-        </h2>
-        <p className="text-center opacity-60 mb-8 text-sm italic">
-          {isLogin ? 'Login to continue your evolution' : 'Join TUIEVOLUTION today'}
-        </p>
+    <div className="min-h-screen flex items-center justify-center pt-20 transition-colors duration-500" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="w-full max-w-md p-8 rounded-3xl shadow-2xl border border-white/20" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-2" style={{ color: 'var(--accent)' }}>Welcome Back</h2>
+          <p className="text-sm opacity-60" style={{ color: 'var(--text-primary)' }}>Login to continue your evolution</p>
+        </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-2xl text-sm mb-6 font-bold animate-shake">
-            {error}
-          </div>
+            <div className="mb-4 p-3 rounded-lg bg-red-100 text-red-600 text-sm text-center font-bold">
+                {error}
+            </div>
         )}
 
-        <form onSubmit={handleAuth} className="space-y-5">
-          <div>
-            <label className="block text-xs font-bold uppercase mb-2 ml-1 opacity-70">Email Address</label>
-            <input 
-              type="email" 
-              required
-              className="w-full p-4 rounded-2xl bg-white/50 dark:bg-black/20 border-2 border-accent/10 focus:border-accent outline-none transition-all"
-              placeholder="tuana@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase mb-2 ml-1 opacity-70">Password</label>
-            <input 
-              type="password" 
-              required
-              autoComplete="current-password"
-              className="w-full p-4 rounded-2xl bg-white/50 dark:bg-black/20 border-2 border-accent/10 focus:border-accent outline-none transition-all"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider opacity-70" style={{ color: 'var(--text-primary)' }}>Email Address</label>
+            <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 opacity-50" size={20} />
+                <input 
+                  type="email" name="email" value={formData.email} onChange={handleChange} required 
+                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-transparent focus:border-accent outline-none bg-white/50 focus:bg-white transition-all"
+                  placeholder="admin@tuievolution.com"
+                />
+            </div>
           </div>
 
-          <div className="flex items-center justify-between px-1">
-            <label className="flex items-center gap-2 cursor-pointer group">
-              <input 
-                type="checkbox" 
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 accent-accent"
-              />
-              <span className="text-xs font-bold opacity-70 group-hover:opacity-100 transition-opacity">Remember Me</span>
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider opacity-70" style={{ color: 'var(--text-primary)' }}>Password</label>
+            <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 opacity-50" size={20} />
+                <input 
+                  type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} required 
+                  className="w-full pl-12 pr-12 py-3 rounded-xl border border-transparent focus:border-accent outline-none bg-white/50 focus:bg-white transition-all"
+                  placeholder="••••••"
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100">
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input 
+                    type="checkbox" 
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 rounded accent-purple-600" 
+                />
+                <span style={{ color: 'var(--text-primary)' }}>Remember Me</span>
             </label>
-            {isLogin && <button type="button" className="text-xs font-bold text-accent hover:underline">Forgot Password?</button>}
+            <button type="button" onClick={handleForgotPassword} className="font-bold hover:underline" style={{ color: 'var(--accent)' }}>
+                Forgot Password?
+            </button>
           </div>
 
-          <button className="w-full bg-accent text-white py-4 rounded-2xl font-bold shadow-xl hover:shadow-accent/20 active:scale-95 transition-all">
-            {isLogin ? 'Sign In' : 'Create Account'}
+          <button 
+            type="submit" 
+            className="w-full py-4 rounded-xl font-bold text-white shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
+            style={{ backgroundColor: 'var(--accent)' }}
+          >
+            Sign In
           </button>
         </form>
 
-        <p className="text-center mt-8 text-sm font-semibold opacity-70">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
-          <button 
-            onClick={() => setIsLogin(!isLogin)}
-            className="ml-2 text-accent font-black hover:underline"
-          >
-            {isLogin ? 'Register Now' : 'Login Here'}
-          </button>
+        <p className="text-center mt-8 text-sm opacity-70" style={{ color: 'var(--text-primary)' }}>
+          Don't have an account? <Link to="/signup" className="font-bold hover:underline" style={{ color: 'var(--accent)' }}>Register Now</Link>
         </p>
       </div>
     </div>

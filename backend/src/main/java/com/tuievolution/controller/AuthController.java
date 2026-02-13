@@ -1,5 +1,6 @@
 package com.tuievolution.controller;
 
+
 import com.tuievolution.model.User;
 import com.tuievolution.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Optional;
 
+@CrossOrigin(origins = "https://tuievolution-frontend.vercel.app") // Buraya Vercel linkinizi yazın
 @RestController
-@RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000") // Frontend portuna göre güncelle
+@RequestMapping("/api/projects")
 public class AuthController {
 
     @Autowired
