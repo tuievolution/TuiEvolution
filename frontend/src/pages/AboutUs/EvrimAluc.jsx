@@ -8,7 +8,7 @@ const EvrimAluc = () => {
 
   useEffect(() => {
     // Backend'den veriyi çek ve filtrele
-    axios.get('https://tuievolution-backend.onrender.com')
+    axios.get('https://tuievolution-backend.onrender.com/api/projects')
       .then(res => {
         // İsmin içinde "evrim" geçen kaydı bulur (büyük/küçük harf duyarsız)
         const found = res.data.find(m => m.name.toLowerCase().includes("evrim"));

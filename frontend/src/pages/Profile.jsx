@@ -13,7 +13,7 @@ const Profile = () => {
   setIsLoading(true);
   
   try {
-    const response = await axios.post("https://tuievolution-backend.onrender.com", {
+    const response = await axios.post("https://tuievolution-backend.onrender.com/api/projects", {
       email: formData.email,
       password: formData.password
     });
