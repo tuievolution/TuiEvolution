@@ -18,7 +18,7 @@ export const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Tema Renkleri (Hem Navbar hem Profil Dropdown için)
+  // Tema Renkleri
   const themeBgColor = isDarkMode ? '#1A0B2E' : '#FFDCF3';
 
   const navbarStyle = {
@@ -32,10 +32,9 @@ export const Navbar = () => {
 
   const signInButtonStyle = {
     backgroundColor: 'var(--accent)',
-    color: isDarkMode ? '#1A0B2E' : '#FFE6F7', // Kontrast için yazı rengi
+    color: isDarkMode ? '#1A0B2E' : '#FFE6F7',
   };
 
-  // Profil Dropdown Stili (Glass effect kaldırıldı, solid renk verildi)
   const profileDropdownStyle = {
     backgroundColor: themeBgColor,
     borderColor: 'rgba(255, 255, 255, 0.2)'
@@ -78,7 +77,9 @@ export const Navbar = () => {
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             
-            <div className="relative">
+            {/* --- DESKTOP PROFILE SECTION (GÜNCELLEME BURADA) --- */}
+            {/* 'hidden md:block' ekleyerek mobilde üst bardan gizledik */}
+            <div className="relative hidden md:block">
               {user ? (
                 <div className="relative">
                   <button 
@@ -89,14 +90,12 @@ export const Navbar = () => {
                   </button>
 
                   {isProfileOpen && (
-                    /* GÜNCELLENEN KISIM: style prop'u eklendi ve classlar temizlendi */
                     <div 
                       style={profileDropdownStyle}
                       className="absolute top-full right-0 mt-2 w-56 border-2 rounded-2xl shadow-2xl overflow-hidden animate-fade-in z-50 text-gray-800 dark:text-white"
                     >
                       <div className="px-4 py-3 border-b border-accent/10 bg-accent/5">
                         <p className="text-[10px] opacity-50 uppercase font-black">Active Account</p>
-                        {/* Buradaki admin@... yazısını user.email ile değiştirin */}
                         <p className="text-sm font-bold truncate">{user?.email || "Giriş Yapılmadı"}</p>
                       </div>
                       <Link to="/profile" className="flex items-center gap-2 px-4 py-3 hover:bg-white/10 text-sm transition-colors font-semibold">
@@ -149,7 +148,7 @@ export const Navbar = () => {
             </button>
           </div>
 
-          <div className="flex flex-col p-6 gap-6 overflow-y-auto">
+          <div className="flex flex-col p-6 gap-6 overflow-y-auto flex-1">
             <Link to="/" onClick={() => setIsOpen(false)} className="flex items-center justify-between text-lg font-bold hover:text-pink-500 transition-colors">
               Home <ChevronRight size={18} className="opacity-50" />
             </Link>
@@ -173,6 +172,50 @@ export const Navbar = () => {
               Connect Us <ChevronRight size={18} className="opacity-50" />
             </Link>
           </div>
+
+          {/* --- MOBILE DRAWER FOOTER (ACCOUNT) --- */}
+          {/* Mobil menünün en altına hesap işlemlerini ekledik */}
+          <div className="p-6 border-t border-white/10 bg-black/5">
+             {user ? (
+               <div className="flex flex-col gap-4">
+                 <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center text-white shadow-md">
+                     <User size={20} />
+                   </div>
+                   <div className="flex flex-col overflow-hidden">
+                      <span className="text-xs opacity-50 font-bold uppercase">Hesap</span>
+                      <span className="text-sm font-bold truncate">{user.email}</span>
+                   </div>
+                 </div>
+                 
+                 <div className="grid grid-cols-2 gap-3 mt-2">
+                   <Link 
+                     to="/profile" 
+                     onClick={() => setIsOpen(false)}
+                     className="flex items-center justify-center gap-2 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold transition-colors"
+                   >
+                     <User size={14} /> Profil
+                   </Link>
+                   <button 
+                     onClick={() => { logout(); setIsOpen(false); }}
+                     className="flex items-center justify-center gap-2 py-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 text-xs font-bold transition-colors"
+                   >
+                     <LogOut size={14} /> Çıkış
+                   </button>
+                 </div>
+               </div>
+             ) : (
+               <Link 
+                 to="/login" 
+                 onClick={() => setIsOpen(false)}
+                 style={signInButtonStyle} 
+                 className="w-full flex items-center justify-center py-3 rounded-xl text-sm font-bold shadow-md hover:brightness-110 transition-all"
+               >
+                 Giriş Yap / Sign In
+               </Link>
+             )}
+          </div>
+
         </div>
       </div>
     </>
